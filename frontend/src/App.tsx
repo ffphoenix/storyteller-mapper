@@ -5,7 +5,6 @@ import { PrimeReactProvider } from "primereact/api";
 import getCurrentUser from "./globalStore/users/actions/setCurrentUser";
 
 export default () => {
-  getCurrentUser();
   const router = createBrowserRouter(routesConfig);
   return (
     <PrimeReactProvider value={{ ripple: false }}>

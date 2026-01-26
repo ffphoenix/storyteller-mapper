@@ -3,7 +3,6 @@ import Konva from "konva";
 import SceneStore from "../../../store/SceneStore";
 import { observer } from "mobx-react-lite";
 import { MAX_ZOOM, MIN_ZOOM } from "../../../constants/uiConstants";
-import gameHistoryMessages from "../../../../gameMessagesHistory/store/GameHistoryMessages";
 
 const zoomByFactor = (stageRef: MutableRefObject<Konva.Stage | null>, factor: number) => {
   if (!stageRef.current) return;
@@ -41,7 +40,7 @@ export default observer(({ stageRef }: ZoomControlsProps) => {
   const handleZoomOut = () => zoomByFactor(stageRef, 1 / 1.2);
   const zoomClasses =
     "absolute right-3 top-3 flex flex-col gap-2 z-50" +
-    (gameHistoryMessages.isOpen ? " right-[325px]" : " right-[50px]");
+    (false ? " right-[325px]" : " right-[50px]");
   return (
     <div className={zoomClasses}>
       <span className="text-sm text-gray-500">{SceneStore.currentZoom}%</span>

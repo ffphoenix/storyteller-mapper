@@ -1,21 +1,7 @@
 import { type RouteObject } from "react-router";
-import GameLayout from "../layouts/GameLayout";
-import GameScenePage from "../pages/gameScene";
+import { GameSceneRoute } from "../pages/gameScene/route";
 
 const routes: RouteObject[] = [
-  {
-    path: "/",
-    loader() {
-      return null;
-    },
-    Component: GameLayout,
-    children: [
-      {
-        path: "/",
-        Component: GameScenePage,
-      },
-    ],
-  },
-
+  GameSceneRoute
 ];
 export default routes;

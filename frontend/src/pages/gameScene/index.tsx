@@ -7,9 +7,7 @@ import useWheelZoomHandler from "./modules/sceneZoomControls/useWheelZoomHandler
 import useSceneTools from "./modules/sceneTools/useSceneTools";
 import useSceneHistory from "./modules/sceneHistory/useSceneHistory";
 import SceneContextMenu from "./modules/sceneTools/components/SceneContextMenu";
-import useSceneSocket from "./modules/sceneSocket/useSceneSocket";
 import sceneStore from "./store/SceneStore";
-import GameMenu from "../gameMessagesHistory/components/GameMenu";
 
 const GameScenePage: React.FC = () => {
   const { stageRef, containerRef } = useStage();
@@ -23,9 +21,6 @@ const GameScenePage: React.FC = () => {
     <div className="relative w-full">
       <div className="absolute left-0 top-0 h-full p-1 border-r bg-white/90 backdrop-blur-sm z-1000">
         <ToolMenu stageRef={stageRef} />
-      </div>
-      <div className="absolute right-0 top-0 h-full p-1 border-l bg-white/90 backdrop-blur-sm z-1000">
-        <GameMenu stageRef={stageRef} />
       </div>
 
       <div className="w-full h-full border rounded bg-white overflow-hidden relative" ref={containerRef}></div>

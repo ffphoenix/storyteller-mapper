@@ -12,8 +12,6 @@ const Header: React.FC = () => {
             <img className="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
           </Link>
           <Link to="">Home</Link>
-          <Link to="/game">My Games</Link>
-          <Link to="/play/1">Play Game</Link>
           <div className="flex gap-2 2xsm:gap-3 ml-auto">
             {/* <!-- Dark Mode Toggler --> */}
             <ThemeToggleButton />
