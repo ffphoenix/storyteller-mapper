@@ -7,7 +7,6 @@ import useWheelZoomHandler from "./modules/sceneZoomControls/useWheelZoomHandler
 import useSceneTools from "./modules/sceneTools/useSceneTools";
 import useSceneHistory from "./modules/sceneHistory/useSceneHistory";
 import SceneContextMenu from "./modules/sceneTools/components/SceneContextMenu";
-import sceneStore from "./store/SceneStore";
 
 const GameScenePage: React.FC = () => {
   const { stageRef, containerRef } = useStage();
@@ -15,7 +14,6 @@ const GameScenePage: React.FC = () => {
   useSceneTools(stageRef);
   useSceneHistory(stageRef);
   console.log("GameScenePage rendered");
-  if (!sceneStore.activeSceneId) return null;
 
   return (
     <div className="relative w-full">

@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import type { GameSceneEntity } from "../../../../generated/api";
+import {generateUUID} from "../utils/uuid";
 
 export type SceneLayer = {
   id: string;
@@ -77,10 +78,13 @@ type SceneStore = {
   setActiveLayer: (layerId: string) => void;
   updateSceneData: (sceneData: GameSceneEntity) => void;
 };
-
+const layerId = generateUUID();
 const sceneStore: SceneStore = makeAutoObservable<SceneStore>({
-  activeSceneId: "",
-  stageJSON: null,
+  activeSceneId: '1211-1111',
+  stageJSON: { attrs: {width:1000,height:1000}, className: "Stage",
+    children:[
+      { attrs: { id: layerId}, "className":"Layer", children: [] }
+    ]},
   UI: {
     currentZoom: 100,
     rightClick: {
@@ -117,7 +121,7 @@ const sceneStore: SceneStore = makeAutoObservable<SceneStore>({
     },
   },
   layers: {
-    activeLayerId: "background",
+    activeLayerId: layerId,
     list: [{ id: "background", name: "Background", visible: true, locked: false }],
   },
   setCurrentZoom: (zoom: number) => (sceneStore.UI.currentZoom = Math.ceil(zoom * 100)),
