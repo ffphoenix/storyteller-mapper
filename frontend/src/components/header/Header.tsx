@@ -19,7 +19,6 @@ const Header: React.FC = () => {
             {/* <!-- Notification Menu Area --> */}
           </div>
           {/* <!-- User Area --> */}
-          <UserDropdown />
         </div>
       </div>
     </header>
