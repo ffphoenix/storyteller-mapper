@@ -9,9 +9,10 @@ const initStage = (container: HTMLDivElement) => {
   const stageJSON = toJS(sceneStore.stageJSON);
   if (!stageJSON) throw new Error("Stage JSON is not loaded");
 
+  const { width, height } = container.getBoundingClientRect();
   const stage = Konva.Node.create(stageJSON, container);
-  stage.width(container.clientWidth);
-  stage.height(container.clientHeight);
+  stage.width(width);
+  stage.height(height);
   const gridLayer = new Konva.Layer({
     id: "grid-layer",
     listening: false,
@@ -22,7 +23,7 @@ const initStage = (container: HTMLDivElement) => {
   return stage;
 };
 
-const useStage = () => {
+const useStage = (parentContainerRef: useRef<HTMLDivElement | null>) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<Konva.Stage | null>(null);
 
@@ -57,7 +58,7 @@ const useStage = () => {
       stage.destroy();
       stageRef.current = null;
     };
-  }, []);
+  }, [parentContainerRef]);
 
   return {
     containerRef,

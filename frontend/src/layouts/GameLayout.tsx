@@ -5,7 +5,7 @@ import { Outlet } from "react-router";
 
 const LayoutContent: React.FC = () => {
   return (
-    <div className="w-full h-full min-h-screen">
+    <div className="flex w-full min-h-screen flex-col">
       <Header />
       <Outlet />
     </div>
