@@ -1,16 +1,15 @@
-import Konva from "konva";
 import SceneStore, { type Tool } from "../../store/SceneStore";
-import type { Stage } from "konva/lib/Stage";
 import { toJS } from "mobx";
+import type { PixiStage, ScenePointerEvent } from "../sceneStage/pixiStage";
 
 // TODO: refactor name and place of this function
-const setRightClickHandler = (stage: Stage) => {
+const setRightClickHandler = (stage: PixiStage) => {
   let isPanning = false;
   let rightButtonDown = false;
   let startPos: { x: number; y: number } | null = null;
   let savedActiveTool: Tool | null = null;
 
-  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseDown = (e: ScenePointerEvent) => {
     const event = e.evt;
     if (event.button === 2) {
       rightButtonDown = true;
@@ -18,7 +17,7 @@ const setRightClickHandler = (stage: Stage) => {
     }
   };
 
-  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseMove = (e: ScenePointerEvent) => {
     const event = e.evt;
 
     if (!rightButtonDown) return;
@@ -44,7 +43,7 @@ const setRightClickHandler = (stage: Stage) => {
     }
   };
 
-  const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseUp = (e: ScenePointerEvent) => {
     const event = e.evt;
     if (!rightButtonDown || event.button !== 2) return;
 

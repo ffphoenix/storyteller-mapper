@@ -1,33 +1,33 @@
-import type { Stage } from "konva/lib/Stage";
-import Konva from "konva";
 import clearTransformerNodesSelection from "../../../sceneTransformer/clearTransformerNodesSelection";
 import drawActiveLayer from "../../utils/drawActiveLayer";
 import getNodeTransformProps from "../../../sceneTransformer/getNodeTransformProps";
 import sceneTransformerStore from "../../../sceneTransformer/store/SceneTransformerStore";
+import type { PixiStage, ScenePointerEvent } from "../../../sceneStage/pixiStage";
+import type { SceneTransformer } from "../../../sceneTransformer/SceneTransformer";
+import { hasSceneName, isSceneNode } from "../../../../utils/nodes/sceneNodeUtils";
 
-export const onMouseUpSelectByClick = (
-  stage: Stage,
-  e: Konva.KonvaEventObject<MouseEvent>,
-  transformer: Konva.Transformer,
-) => {
-  const node = e.target as Konva.Node;
-  // clicked on transformer - do nothing
-  if (node.getParent() === transformer || node === transformer) {
-    return;
-  }
-
-  // clicked on empty area - remove all selections
-  if (node === stage) {
+export const onMouseUpSelectByClick = (stage: PixiStage, e: ScenePointerEvent, transformer: SceneTransformer) => {
+  let node = e.target;
+  if (!node) {
     clearTransformerNodesSelection(stage);
     return;
   }
 
-  // click on non-object
-  if (!node.hasName("object")) {
+  if (!hasSceneName(node, "object")) {
+    let parent = node.parent;
+    while (parent) {
+      if (isSceneNode(parent) && hasSceneName(parent, "object")) {
+        node = parent;
+        break;
+      }
+      parent = parent.parent;
+    }
+  }
+
+  if (!node || !hasSceneName(node, "object")) {
     clearTransformerNodesSelection(stage);
     return;
   }
-  node.setDraggable(true);
 
   // clicked on some node
   const isSelected = transformer.nodes().includes(node);
@@ -40,7 +40,7 @@ export const onMouseUpSelectByClick = (
     // remove from selection
     const nodes = transformer.nodes().slice(); // clone array
     nodes.splice(nodes.indexOf(node), 1);
-    node.setDraggable(false);
+    node.eventMode = "static";
     transformer.nodes(nodes);
   } else if (e.evt.shiftKey && !isSelected) {
     // add to selection

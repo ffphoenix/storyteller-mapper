@@ -4,13 +4,13 @@ import socketManager from "../../../../utils/socketManager";
 import CurrentUser from "../../../../globalStore/users/CurrentUser";
 import nodesToJSON from "../../utils/nodes/nodesToJSON";
 import getNodeTransformProps from "../sceneTransformer/getNodeTransformProps";
-import type Konva from "konva";
 import { type MutableRefObject, useEffect } from "react";
 import addObject from "../sceneActions/producer/addObject";
 import removeObject from "../sceneActions/producer/removeObject";
 import modifyObject from "../sceneActions/producer/modifyObject";
+import type { PixiStage } from "../sceneStage/pixiStage";
 
-const useSceneSocket = (stageRef: MutableRefObject<Konva.Stage | null>) => {
+const useSceneSocket = (stageRef: MutableRefObject<PixiStage | null>, stageVersion: number) => {
   const socket = socketManager.socket("/game-scene");
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const useSceneSocket = (stageRef: MutableRefObject<Konva.Stage | null>) => {
 
     socket.on("objectModified", (data) => {
       if (!stageRef.current) return;
-      modifyObject(stageRef.current, data.layerId, data.payload, data.currentGroupProps, data.originalGroupProps);
+      modifyObject(stageRef.current, data.layerId, data.payload, data.originalGroupProps, data.currentGroupProps);
     });
 
     const onObjectAdded = (event: CustomEvent<SceneActionEvent>) => {
@@ -54,7 +54,7 @@ const useSceneSocket = (stageRef: MutableRefObject<Konva.Stage | null>) => {
         sceneId: SceneStore.activeSceneId,
         payload: nodesJSON,
         // TODO: Fix zoom and pan problems!!
-        currentGroupProps: { ...getNodeTransformProps(nodes as Konva.Shape), x: transformer.x(), y: transformer.y() },
+        currentGroupProps: getNodeTransformProps(transformer),
         originalGroupProps: originalProps,
       });
     };
@@ -97,6 +97,6 @@ const useSceneSocket = (stageRef: MutableRefObject<Konva.Stage | null>) => {
       document.removeEventListener("sc:object:removed", onObjectRemoved as EventListener);
       document.removeEventListener("sc:object:history:action", onHistoryAction as EventListener);
     };
-  }, []);
+  }, [stageVersion]);
 };
 export default useSceneSocket;

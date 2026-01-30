@@ -1,11 +1,11 @@
-import type Konva from "konva";
 import SceneHistoryStore from "../SceneHistoryStore";
 import type { MutableRefObject } from "react";
 import doHistoryAction from "./doHistoryAction";
 import { toJS } from "mobx";
 import fireObjectsHistoryAction from "../../../sceneActions/catcher/fireObjectsHistoryAction";
+import type { PixiStage } from "../../../sceneStage/pixiStage";
 
-const undoSceneAction = (stageRef: MutableRefObject<Konva.Stage | null>) => {
+const undoSceneAction = (stageRef: MutableRefObject<PixiStage | null>) => {
   const stage = stageRef.current;
   if (!stage) return;
 
@@ -23,8 +23,8 @@ const undoSceneAction = (stageRef: MutableRefObject<Konva.Stage | null>) => {
       nodes,
       layerId,
       actionType,
-      originalGroupProps: currentGroupProps,
-      currentGroupProps: originalGroupProps,
+      originalGroupProps,
+      currentGroupProps,
     });
     fireObjectsHistoryAction(stage, {
       historyAction: "undo",

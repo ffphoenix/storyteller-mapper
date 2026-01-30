@@ -1,4 +1,6 @@
-import Konva from "konva";
+import type { SceneNode, SceneNodeJSON } from "../../utils/nodes/types";
+import type { SceneTransformer } from "../sceneTransformer/SceneTransformer";
+import type { TransformProps } from "../sceneTransformer/types";
 
 export type ActionProducer = "self" | "history" | "websocket";
 
@@ -7,17 +9,17 @@ export type ModifyActionType = "transformend" | "dragend" | undefined;
 export type SceneActionEvent = {
   producer: ActionProducer;
   layerId: string;
-  nodes: Konva.Node | Konva.Node[];
-  transformer?: Konva.Transformer;
+  nodes: SceneNode | SceneNode[] | SceneTransformer;
+  transformer?: SceneTransformer;
   event?: MouseEvent;
   actionType?: ModifyActionType;
-  originalProps?: Partial<Konva.NodeConfig>;
+  originalProps?: TransformProps;
 };
 export type SceneHistoryActionEvent = {
   action: string;
-  nodes: Partial<Konva.Node>[];
+  nodes: SceneNodeJSON[];
   layerId: string;
   actionType?: string;
-  originalGroupProps?: Partial<Konva.NodeConfig>;
-  currentGroupProps?: Partial<Konva.NodeConfig>;
+  originalGroupProps?: TransformProps;
+  currentGroupProps?: TransformProps;
 };

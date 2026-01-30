@@ -1,6 +1,4 @@
-import type Konva from "konva";
-
-export default (e: KeyboardEvent, stage: Konva.Stage) => {
+export default (e: KeyboardEvent) => {
   const target = e.target as HTMLElement | null;
   const tag = (target?.tagName || "").toLowerCase();
   const isEditable = tag === "input" || tag === "textarea" || (target && (target as HTMLElement).isContentEditable);

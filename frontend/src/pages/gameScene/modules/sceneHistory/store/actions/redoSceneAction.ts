@@ -1,11 +1,11 @@
-import type Konva from "konva";
 import SceneHistoryStore from "../SceneHistoryStore";
 import type { MutableRefObject } from "react";
 import doHistoryAction from "./doHistoryAction";
 import { toJS } from "mobx";
 import fireObjectsHistoryAction from "../../../sceneActions/catcher/fireObjectsHistoryAction";
+import type { PixiStage } from "../../../sceneStage/pixiStage";
 
-const redoSceneAction = (stageRef: MutableRefObject<Konva.Stage | null>) => {
+const redoSceneAction = (stageRef: MutableRefObject<PixiStage | null>) => {
   const stage = stageRef.current;
   if (!stage) return;
 
@@ -22,8 +22,8 @@ const redoSceneAction = (stageRef: MutableRefObject<Konva.Stage | null>) => {
         nodes,
         layerId,
         actionType,
-        originalGroupProps: currentGroupProps,
-        currentGroupProps: originalGroupProps,
+        originalGroupProps,
+        currentGroupProps,
       },
       true,
     );
@@ -33,8 +33,8 @@ const redoSceneAction = (stageRef: MutableRefObject<Konva.Stage | null>) => {
       actionType,
       nodes,
       layerId,
-      originalGroupProps: currentGroupProps || {},
-      currentGroupProps: originalGroupProps || {},
+      originalGroupProps: originalGroupProps || {},
+      currentGroupProps: currentGroupProps || {},
     });
   } catch (e) {
     console.error(e);

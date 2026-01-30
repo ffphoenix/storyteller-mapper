@@ -1,11 +1,11 @@
 import { makeAutoObservable } from "mobx";
-import Konva from "konva";
+import type { SceneNodeJSON } from "../../../utils/nodes/types";
 
 type ToolsStore = {
   select: {
-    clipboardNodes: Partial<Konva.Node>[];
+    clipboardNodes: SceneNodeJSON[];
   };
-  setClipboardNodes: (nodes: Partial<Konva.Node>[]) => void;
+  setClipboardNodes: (nodes: SceneNodeJSON[]) => void;
 };
 const toolsStore = makeAutoObservable<ToolsStore>({
   select: {
