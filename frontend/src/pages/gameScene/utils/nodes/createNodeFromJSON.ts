@@ -39,7 +39,7 @@ const attachSceneMeta = (node: SceneNode, json: SceneNodeJSON) => {
 const drawRect = (graphics: Graphics, attrs: Record<string, any>) => {
   const { color: strokeColor, alpha: strokeAlpha } = parseColor(attrs.stroke);
   const { color: fillColor, alpha: fillAlpha } = parseColor(attrs.fill, 0xffffff);
-  const strokeWidth = attrs.strokeWidth ?? 0;
+  const strokeWidth = attrs.strokeWidth ?? 1;
   graphics.clear();
   if (strokeWidth > 0) {
     graphics.lineStyle({ width: strokeWidth, color: strokeColor, alpha: strokeAlpha });
@@ -52,7 +52,7 @@ const drawRect = (graphics: Graphics, attrs: Record<string, any>) => {
 const drawCircle = (graphics: Graphics, attrs: Record<string, any>) => {
   const { color: strokeColor, alpha: strokeAlpha } = parseColor(attrs.stroke);
   const { color: fillColor, alpha: fillAlpha } = parseColor(attrs.fill, 0xffffff);
-  const strokeWidth = attrs.strokeWidth ?? 0;
+  const strokeWidth = attrs.strokeWidth ?? 1;
   graphics.clear();
   if (strokeWidth > 0) {
     graphics.lineStyle({ width: strokeWidth, color: strokeColor, alpha: strokeAlpha });
