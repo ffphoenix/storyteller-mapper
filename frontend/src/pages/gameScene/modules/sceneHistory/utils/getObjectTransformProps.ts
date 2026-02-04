@@ -1,15 +1,17 @@
-import type Konva from "konva";
+import type { SceneNode } from "../../../utils/nodes/types";
+import { radiansToDegrees } from "../../../utils/nodes/sceneNodeUtils";
 
-export const getObjectTransformProps = (object: Konva.Node) => {
+export const getObjectTransformProps = (object: SceneNode) => {
+  const bounds = object.getBounds();
   return {
-    rotation: object.rotation(),
-    x: object.x(),
-    y: object.y(),
-    scaleX: object.scaleX(),
-    scaleY: object.scaleY(),
-    skewX: object.skewX(),
-    skewY: object.skewY(),
-    width: object.width(),
-    height: object.height(),
+    rotation: radiansToDegrees(object.rotation),
+    x: object.position.x,
+    y: object.position.y,
+    scaleX: object.scale.x,
+    scaleY: object.scale.y,
+    skewX: radiansToDegrees(object.skew.x),
+    skewY: radiansToDegrees(object.skew.y),
+    width: bounds.width,
+    height: bounds.height,
   };
 };

@@ -1,53 +1,53 @@
-import Konva from "konva";
-import type { Stage } from "konva/lib/Stage";
 import type { MouseHandlers } from "../useSceneTools";
 import SceneStore from "../../../store/SceneStore";
-import { autorun } from "mobx";
 import fireObjectAddedEvent from "../../sceneActions/catcher/fireObjectAddedEvent";
 import { generateUUID } from "../../../utils/uuid";
 import getActiveLayer from "../utils/getActiveLayer";
+import type { PixiStage, ScenePointerEvent } from "../../sceneStage/pixiStage";
+import { createNodeFromJSON, updateNodeGeometry } from "../../../utils/nodes/createNodeFromJSON";
+import type { SceneNode } from "../../../utils/nodes/types";
 
-const getDrawPencilHandlers = (stage: Stage): MouseHandlers => {
+const getDrawPencilHandlers = (stage: PixiStage): MouseHandlers => {
   let isDrawing = false;
-  let lastLine: Konva.Line | null = null;
+  let lastLine: SceneNode | null = null;
 
-  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseDown = (e: ScenePointerEvent) => {
     if (e.evt.button !== 0) return;
 
     isDrawing = true;
-    const pos = stage.getPointerPosition();
-    if (!pos) return;
-    const transform = stage.getAbsoluteTransform().copy().invert();
-    const relativePos = transform.point(pos);
+    const relativePos = stage.getWorldPointerPosition();
+    if (!relativePos) return;
 
-    lastLine = new Konva.Line({
-      id: generateUUID(),
-      stroke: SceneStore.tools.drawTools.strokeColor,
-      strokeWidth: SceneStore.tools.drawTools.strokeWidth,
-      globalCompositeOperation: "source-over",
-      points: [relativePos.x, relativePos.y],
-      draggable: false,
-      name: "object",
+    lastLine = createNodeFromJSON({
+      className: "Line",
+      attrs: {
+        id: generateUUID(),
+        stroke: SceneStore.tools.drawTools.strokeColor,
+        strokeWidth: SceneStore.tools.drawTools.strokeWidth,
+        points: [relativePos.x, relativePos.y],
+        draggable: false,
+        name: "object",
+      },
     });
+    lastLine.__scene.layerId = SceneStore.activeLayerId;
 
     const layer = getActiveLayer(stage);
-    layer.add(lastLine);
+    layer.addChild(lastLine);
   };
 
-  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseMove = (_e: ScenePointerEvent) => {
     if (!isDrawing || !lastLine) return;
 
-    const pos = stage.getPointerPosition();
-    if (!pos) return;
-    const transform = stage.getAbsoluteTransform().copy().invert();
-    const relativePos = transform.point(pos);
+    const relativePos = stage.getWorldPointerPosition();
+    if (!relativePos) return;
 
-    const newPoints = lastLine.points().concat([relativePos.x, relativePos.y]);
-    lastLine.points(newPoints);
+    const newPoints = (lastLine.__scene.attrs.points ?? []).concat([relativePos.x, relativePos.y]);
+    lastLine.__scene.attrs.points = newPoints;
+    updateNodeGeometry(lastLine);
     stage.batchDraw();
   };
 
-  const onMouseUp = () => {
+  const onMouseUp = (_e: ScenePointerEvent) => {
     if (isDrawing && lastLine) {
       fireObjectAddedEvent("self", lastLine);
     }

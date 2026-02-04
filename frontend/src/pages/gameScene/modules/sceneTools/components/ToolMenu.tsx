@@ -7,22 +7,28 @@ import "./ToolMenu.css";
 import SceneStore from "../../../store/SceneStore";
 import { observer } from "mobx-react-lite";
 import UploadImageButton from "./UploadImageButton";
-import type { Stage } from "konva/lib/Stage";
+import type { PixiStage } from "../../sceneStage/pixiStage";
+import nodesToJSON from "../../../utils/nodes/nodesToJSON";
+import { isSceneNode } from "../../../utils/nodes/sceneNodeUtils";
 
 type Props = {
-  stageRef: MutableRefObject<Stage | null>;
+  stageRef: MutableRefObject<PixiStage | null>;
 };
 
 const ToolMenu: React.FC<Props> = ({ stageRef }) => {
   const [gridPosition, setGridPosition] = React.useState<"top" | "bottom">("bottom");
   const printCanvas = () => {
-    console.log("Print stage", JSON.parse(stageRef.current?.toJSON() ?? "{}"));
-    console.log("Print stage", stageRef.current?.toJSON());
+    const stage = stageRef.current;
+    if (!stage) return;
+    const allNodes = stage.getLayers().flatMap((layer) => layer.children.filter(isSceneNode));
+    console.log("Print stage", nodesToJSON(allNodes));
   };
   const onClear = () => {
     const stage = stageRef.current;
     if (!stage) return;
-    stage.getLayers().forEach((layer) => layer.destroyChildren());
+    stage.getLayers().forEach((layer) => {
+      layer.children.forEach((child) => child.destroy());
+    });
     stage.batchDraw();
   };
   return (
@@ -88,9 +94,14 @@ const ToolMenu: React.FC<Props> = ({ stageRef }) => {
             if (!gridLayer) return;
 
             if (gridPosition === "bottom") {
-              gridLayer.moveToTop();
+              const parent = gridLayer.parent;
+              if (parent) {
+                const overlayIndex = parent.children.length - 1;
+                const targetIndex = Math.max(0, overlayIndex - 1);
+                parent.setChildIndex(gridLayer, targetIndex);
+              }
             } else {
-              gridLayer.moveToBottom();
+              gridLayer.parent?.setChildIndex(gridLayer, 0);
             }
             setGridPosition(gridPosition === "bottom" ? "top" : "bottom");
           }}

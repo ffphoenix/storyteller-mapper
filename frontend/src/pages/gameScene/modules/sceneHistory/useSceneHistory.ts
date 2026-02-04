@@ -1,14 +1,14 @@
 import { type MutableRefObject, useEffect } from "react";
 import SceneHistoryStore from "./store/SceneHistoryStore";
-import type Konva from "konva";
 import isKeyDownInterceptable from "../../utils/isKeyDownInterceptable";
 import undoSceneAction from "./store/actions/undoSceneAction";
 import redoSceneAction from "./store/actions/redoSceneAction";
 import type { SceneActionEvent } from "../sceneActions/types";
 import nodesToJSON from "../../utils/nodes/nodesToJSON";
 import getNodeTransformProps from "../sceneTransformer/getNodeTransformProps";
+import type { PixiStage } from "../sceneStage/pixiStage";
 
-export default function useSceneHistory(stageRef: MutableRefObject<Konva.Stage | null>) {
+export default function useSceneHistory(stageRef: MutableRefObject<PixiStage | null>, stageVersion: number) {
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -28,8 +28,7 @@ export default function useSceneHistory(stageRef: MutableRefObject<Konva.Stage |
         nodes: nodesToJSON(transformer.nodes()),
         layerId,
         actionType,
-        // @TODO fix this, find graceful realization
-        currentGroupProps: { ...getNodeTransformProps(nodes as Konva.Shape), x: transformer.x(), y: transformer.y() },
+        currentGroupProps: getNodeTransformProps(transformer),
         originalGroupProps: originalProps,
       });
     };
@@ -43,7 +42,7 @@ export default function useSceneHistory(stageRef: MutableRefObject<Konva.Stage |
     document.addEventListener("sc:object:removed", onObjectRemoved as EventListener);
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!isKeyDownInterceptable(e, stage)) return;
+      if (!isKeyDownInterceptable(e)) return;
       const isCtrlOrMeta = e.ctrlKey || e.metaKey;
       if (isCtrlOrMeta && e.code === "KeyZ") {
         console.log(`[history][ctrl + z][shift: ${e.shiftKey}]`);
@@ -72,5 +71,5 @@ export default function useSceneHistory(stageRef: MutableRefObject<Konva.Stage |
       document.removeEventListener("sc:object:removed", onObjectRemoved as EventListener);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, []);
+  }, [stageVersion]);
 }

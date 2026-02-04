@@ -1,14 +1,17 @@
-import Konva from "konva";
+import type { PixiStage } from "../../sceneStage/pixiStage";
+import type { SceneNodeJSON } from "../../../utils/nodes/types";
+import { createNodeFromJSON } from "../../../utils/nodes/createNodeFromJSON";
 
-const addObject = (stage: Konva.Stage, nodes: Partial<Konva.Node>[], layerId: string) => {
-  const layer = stage.findOne(`#${layerId}`) as Konva.Layer;
+const addObject = (stage: PixiStage, nodes: SceneNodeJSON[], layerId: string) => {
+  const layer = stage.getLayerById(layerId);
   if (!layer) {
     console.error(`Layer with id ${layerId} not found in stage`);
     return;
   }
   nodes.forEach((nodeJSON) => {
-    const node = Konva.Node.create(nodeJSON);
-    layer.add(node);
+    const node = createNodeFromJSON(nodeJSON);
+    node.__scene.layerId = layerId;
+    layer.addChild(node);
   });
   stage.batchDraw();
 };

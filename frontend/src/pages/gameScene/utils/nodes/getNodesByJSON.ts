@@ -1,10 +1,14 @@
-import Konva from "konva";
+import type { SceneNodeJSON, SceneNode } from "./types";
 
-const getNodesByJSON = (stage: Konva.Stage, nodesJSON: Partial<Konva.Node>[]): Konva.Node[] => {
+type StageLookup = {
+  findOne: (selector: string) => SceneNode | null;
+};
+
+const getNodesByJSON = (stage: StageLookup, nodesJSON: SceneNodeJSON[]): SceneNode[] => {
   return nodesJSON.reduce((acc, nodeJSON) => {
     const node = stage.findOne(`#${nodeJSON.attrs?.id}`);
     if (node) acc.push(node);
     return acc;
-  }, [] as Konva.Node[]);
+  }, [] as SceneNode[]);
 };
 export default getNodesByJSON;

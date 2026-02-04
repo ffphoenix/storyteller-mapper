@@ -1,11 +1,11 @@
-import type Konva from "konva";
 import type { ActionProducer, SceneActionEvent } from "../types";
+import type { SceneNode } from "../../../utils/nodes/types";
 
 const fireObjectRemovedEvent = (
   producer: ActionProducer,
-  nodes: Konva.Node | Konva.Node[],
+  nodes: SceneNode | SceneNode[],
   layerId: string,
-  event?: Konva.KonvaEventObject<MouseEvent>,
+  event?: { evt: MouseEvent },
 ) => {
   document.dispatchEvent(
     new CustomEvent<SceneActionEvent>("sc:object:removed", { detail: { producer, nodes, event: event?.evt, layerId } }),

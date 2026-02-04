@@ -1,14 +1,14 @@
-import Konva from "konva";
 import fireObjectModifiedEvent from "../sceneActions/catcher/fireObjectModifiedEvent";
 import sceneTransformerStore from "./store/SceneTransformerStore";
 import type { ModifyActionType } from "../sceneActions/types";
 import getNodeTransformProps from "./getNodeTransformProps";
 import { toJS } from "mobx";
+import type { SceneTransformer } from "./SceneTransformer";
 
-const setTransformerEvents = (transformer: Konva.Transformer) => {
+const setTransformerEvents = (transformer: SceneTransformer) => {
   transformer.on("transformend dragend", (e) => {
-    const nodes = e.target as Konva.Shape;
-    const transformerNode = e.currentTarget as Konva.Transformer;
+    const nodes = e.target as SceneTransformer;
+    const transformerNode = e.currentTarget as SceneTransformer;
 
     fireObjectModifiedEvent(
       "self",

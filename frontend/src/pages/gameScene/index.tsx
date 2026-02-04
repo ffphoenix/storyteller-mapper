@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import ToolMenu from "./modules/sceneTools/components/ToolMenu";
 import "./style.css";
 import useStage from "./modules/sceneStage/useStage";
@@ -9,15 +9,14 @@ import useSceneHistory from "./modules/sceneHistory/useSceneHistory";
 import SceneContextMenu from "./modules/sceneTools/components/SceneContextMenu";
 
 const GameScenePage: React.FC = () => {
-  const parentContainerRef = useRef<HTMLDivElement | null>(null);
-  const { stageRef, containerRef } = useStage(parentContainerRef);
-  useWheelZoomHandler(stageRef);
-  useSceneTools(stageRef);
-  useSceneHistory(stageRef);
+  const { stageRef, containerRef, stageVersion } = useStage();
+  useWheelZoomHandler(stageRef, stageVersion);
+  useSceneTools(stageRef, stageVersion);
+  useSceneHistory(stageRef, stageVersion);
   console.log("GameScenePage rendered");
 
   return (
-    <div className="relative w-full h-full flex-1 min-h-full" ref={parentContainerRef}>
+    <div className="relative w-full h-full flex-1 min-h-full">
       <div className="absolute left-0 top-0 h-full pl-1 pr-1 border-r bg-white/90 backdrop-blur-sm z-1000">
         <ToolMenu stageRef={stageRef} />
       </div>

@@ -1,20 +1,22 @@
-import type Konva from "konva";
 import removeObject from "../../../sceneActions/producer/removeObject";
 import modifyObject from "../../../sceneActions/producer/modifyObject";
 import addObject from "../../../sceneActions/producer/addObject";
+import type { SceneNodeJSON } from "../../../../utils/nodes/types";
+import type { TransformProps } from "../../../sceneTransformer/types";
+import type { PixiStage } from "../../../sceneStage/pixiStage";
 
 export const doHistoryAction = (
   queue: "undo" | "redo",
-  stage: Konva.Stage,
+  stage: PixiStage,
   action: "add" | "modify" | "remove",
-  nodes: Partial<Konva.Node>[],
+  nodes: SceneNodeJSON[],
   layerId: string,
-  originalProps?: Partial<Konva.NodeConfig>,
-  currentGroupProps?: Partial<Konva.NodeConfig>,
+  originalProps?: TransformProps,
+  currentGroupProps?: TransformProps,
 ) => {
   const undoMapByAction = {
     add: () => removeObject(stage, nodes),
-    modify: () => modifyObject(stage, layerId, nodes, originalProps, currentGroupProps),
+    modify: () => modifyObject(stage, layerId, nodes, currentGroupProps, originalProps),
     remove: () => addObject(stage, nodes, layerId),
   };
 

@@ -1,8 +1,7 @@
 import { type MutableRefObject, useEffect, useRef } from "react";
 import SceneStore, { type Tool } from "../../store/SceneStore";
 import { autorun } from "mobx";
-import Konva from "konva";
-import type { Stage } from "konva/lib/Stage";
+import type { PixiStage, ScenePointerEvent } from "../sceneStage/pixiStage";
 import getHandHandlers from "./handlers/getHandHandlers";
 import getSelectHandlers from "./handlers/getSelectHandlers";
 import getEmptyHandlers from "./handlers/getEmptyHandlers";
@@ -15,13 +14,13 @@ import getMeasureHandlers from "./handlers/getMeasureHandlers";
 import setRightClickHandler from "./setRightClickHandler";
 
 export type MouseHandlers = {
-  onMouseDown: (e: Konva.KonvaEventObject<MouseEvent>) => void;
-  onMouseUp: (e: Konva.KonvaEventObject<MouseEvent>) => void;
-  onMouseMove: (e: Konva.KonvaEventObject<MouseEvent>) => void;
+  onMouseDown: (e: ScenePointerEvent) => void;
+  onMouseUp: (e: ScenePointerEvent) => void;
+  onMouseMove: (e: ScenePointerEvent) => void;
   handlerDisposer: () => void;
 };
 
-const getMouseHandlers = (activeTool: Tool, stage: Stage): MouseHandlers => {
+const getMouseHandlers = (activeTool: Tool, stage: PixiStage): MouseHandlers => {
   const handlersMap = {
     hand: () => getHandHandlers(stage),
     select: () => getSelectHandlers(stage),
@@ -36,7 +35,7 @@ const getMouseHandlers = (activeTool: Tool, stage: Stage): MouseHandlers => {
   return handlersMap[activeTool]() ?? getEmptyHandlers();
 };
 
-const useSceneTools = (stageRef: MutableRefObject<Stage | null>) => {
+const useSceneTools = (stageRef: MutableRefObject<PixiStage | null>, stageVersion: number) => {
   const unsubscribeCallbackRef = useRef<() => void>(() => {});
   useEffect(() => {
     if (!stageRef.current) return;
@@ -65,7 +64,7 @@ const useSceneTools = (stageRef: MutableRefObject<Stage | null>) => {
       autorunDispose();
       unsubscribeCallbackRef.current();
     };
-  });
+  }, [stageVersion]);
 };
 
 export default useSceneTools;

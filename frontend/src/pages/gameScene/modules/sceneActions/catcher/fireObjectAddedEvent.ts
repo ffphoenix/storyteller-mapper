@@ -1,8 +1,8 @@
 import type { ActionProducer, SceneActionEvent } from "../types";
-import type Konva from "konva";
 import getNodesLayerId from "../../../utils/nodes/getNodesLayerId";
+import type { SceneNode } from "../../../utils/nodes/types";
 
-const fireObjectAddedEvent = (producer: ActionProducer, nodes: Konva.Node | Konva.Node[]) => {
+const fireObjectAddedEvent = (producer: ActionProducer, nodes: SceneNode | SceneNode[]) => {
   const layerId = getNodesLayerId(nodes);
 
   document.dispatchEvent(

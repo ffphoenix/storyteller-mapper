@@ -1,10 +1,10 @@
 import { type MutableRefObject } from "react";
-import Konva from "konva";
 import SceneStore from "../../../store/SceneStore";
 import { observer } from "mobx-react-lite";
 import { MAX_ZOOM, MIN_ZOOM } from "../../../constants/uiConstants";
+import type { PixiStage } from "../../sceneStage/pixiStage";
 
-const zoomByFactor = (stageRef: MutableRefObject<Konva.Stage | null>, factor: number) => {
+const zoomByFactor = (stageRef: MutableRefObject<PixiStage | null>, factor: number) => {
   if (!stageRef.current) return;
   const stage = stageRef.current;
   const oldZoom = stage.scaleX();
@@ -33,7 +33,7 @@ const zoomByFactor = (stageRef: MutableRefObject<Konva.Stage | null>, factor: nu
 };
 
 type ZoomControlsProps = {
-  stageRef: MutableRefObject<Konva.Stage | null>;
+  stageRef: MutableRefObject<PixiStage | null>;
 };
 export default observer(({ stageRef }: ZoomControlsProps) => {
   const handleZoomIn = () => zoomByFactor(stageRef, 1.2);

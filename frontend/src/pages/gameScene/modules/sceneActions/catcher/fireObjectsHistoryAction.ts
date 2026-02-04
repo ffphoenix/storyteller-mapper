@@ -1,10 +1,10 @@
 import type { SceneHistoryActionEvent } from "../types";
 import nodesToJSON from "../../../utils/nodes/nodesToJSON";
 import getNodesByJSON from "../../../utils/nodes/getNodesByJSON";
-import Konva from "konva";
+import type { PixiStage } from "../../sceneStage/pixiStage";
 
 const fireObjectHistoryAction = (
-  stage: Konva.Stage,
+  stage: PixiStage,
   { ...props }: SceneHistoryActionEvent & { historyAction: "undo" | "redo" },
 ) => {
   const action =

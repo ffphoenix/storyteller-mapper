@@ -1,20 +1,19 @@
-import Konva from "konva";
-import type { Stage } from "konva/lib/Stage";
 import type { MouseHandlers } from "../useSceneTools";
+import type { PixiStage, ScenePointerEvent } from "../../sceneStage/pixiStage";
 
-const getHandHandlers = (stage: Stage): MouseHandlers => {
+const getHandHandlers = (stage: PixiStage): MouseHandlers => {
   let isPanning = false;
 
   stage.container().style.cursor = "grab";
 
-  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseDown = (e: ScenePointerEvent) => {
     if (e.evt.button !== 0) return;
 
     isPanning = true;
     stage.container().style.cursor = "grabbing";
   };
 
-  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseMove = (e: ScenePointerEvent) => {
     if (!isPanning) return;
     stage.container().style.cursor = "grabbing";
 
@@ -27,7 +26,7 @@ const getHandHandlers = (stage: Stage): MouseHandlers => {
     stage.batchDraw();
   };
 
-  const onMouseUp = () => {
+  const onMouseUp = (_e: ScenePointerEvent) => {
     isPanning = false;
     stage.container().style.cursor = "grab";
   };

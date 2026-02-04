@@ -1,9 +1,9 @@
 import { makeAutoObservable } from "mobx";
-import Konva from "konva";
+import type { TransformProps } from "../types";
 
 type SceneTransformerStore = {
-  startProps: Partial<Konva.NodeConfig>;
-  setStartProps: (props: Partial<Konva.NodeConfig>) => void;
+  startProps: TransformProps;
+  setStartProps: (props: TransformProps) => void;
 };
 
 const sceneTransformerStore = makeAutoObservable<SceneTransformerStore>({

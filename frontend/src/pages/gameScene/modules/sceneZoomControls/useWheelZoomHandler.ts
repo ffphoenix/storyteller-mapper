@@ -1,11 +1,10 @@
 import { type MutableRefObject, useEffect } from "react";
 import SceneStore from "../../store/SceneStore";
 import { MAX_ZOOM, MIN_ZOOM } from "../../constants/uiConstants";
-import type { KonvaEventObject } from "konva/lib/Node";
-import type { Stage } from "konva/lib/Stage";
+import type { PixiStage, ScenePointerEvent } from "../sceneStage/pixiStage";
 
-const onWheel = (stage: Stage, e: KonvaEventObject<WheelEvent>) => {
-  const event = e.evt;
+const onWheel = (stage: PixiStage, e: ScenePointerEvent) => {
+  const event = e.evt as WheelEvent;
   const oldZoom = stage.scaleX();
   const delta = event.deltaY;
   // TODO: fix factor number and set some proper steps for scroll
@@ -35,16 +34,16 @@ const onWheel = (stage: Stage, e: KonvaEventObject<WheelEvent>) => {
   event.stopPropagation();
 };
 
-export default (stageRef: MutableRefObject<Stage | null>) => {
+export default (stageRef: MutableRefObject<PixiStage | null>, stageVersion: number) => {
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const onWheelHandler = (e: KonvaEventObject<WheelEvent>) => onWheel(stage, e);
+    const onWheelHandler = (e: ScenePointerEvent) => onWheel(stage, e);
     stage.on("wheel", onWheelHandler);
 
     return () => {
       stage.off("wheel", onWheelHandler);
     };
-  }, []);
+  }, [stageVersion]);
 };

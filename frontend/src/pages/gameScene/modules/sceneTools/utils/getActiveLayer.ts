@@ -1,9 +1,9 @@
-import type { Stage } from "konva/lib/Stage";
 import SceneStore from "../../../store/SceneStore";
-import Konva from "konva";
+import type { PixiStage } from "../../sceneStage/pixiStage";
 
-const getActiveLayer = (stage: Stage) => {
-  console.log("getActiveLayer", SceneStore.activeLayerId);
-  return stage.findOne(`#${SceneStore.activeLayerId}`) as Konva.Layer;
+const getActiveLayer = (stage: PixiStage) => {
+  const layer = stage.getLayerById(SceneStore.activeLayerId);
+  if (!layer) throw new Error(`Layer #ID ${SceneStore.activeLayerId} not found`);
+  return layer;
 };
 export default getActiveLayer;

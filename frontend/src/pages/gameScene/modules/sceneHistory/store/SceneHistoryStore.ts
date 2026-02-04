@@ -1,21 +1,22 @@
 import { makeAutoObservable } from "mobx";
-import type Konva from "konva";
 import type { ModifyActionType } from "../../sceneActions/types";
+import type { SceneNodeJSON } from "../../../utils/nodes/types";
+import type { TransformProps } from "../../sceneTransformer/types";
 
 type Action = "add" | "modify" | "remove";
 type EventItem = {
   layerId: string;
-  nodes: Partial<Konva.Node>[];
-  originalGroupProps?: Partial<Konva.NodeConfig>;
-  currentGroupProps?: Partial<Konva.NodeConfig>;
+  nodes: SceneNodeJSON[];
+  originalGroupProps?: TransformProps;
+  currentGroupProps?: TransformProps;
   actionType?: ModifyActionType;
 };
 export type HistoryItem = {
   action: Action;
   layerId: string;
-  nodes: Partial<Konva.Node>[];
-  originalGroupProps?: Partial<Konva.NodeConfig>;
-  currentGroupProps?: Partial<Konva.NodeConfig>;
+  nodes: SceneNodeJSON[];
+  originalGroupProps?: TransformProps;
+  currentGroupProps?: TransformProps;
   actionType?: ModifyActionType;
 };
 type SceneHistory = {

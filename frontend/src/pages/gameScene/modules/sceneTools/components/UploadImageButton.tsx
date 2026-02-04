@@ -1,10 +1,10 @@
 import { type MutableRefObject, useRef } from "react";
-import Konva from "konva";
 import { Button, type ButtonProps } from "primereact/button";
 import { ImageIcon } from "../../../icons";
 import handleImageUpload from "../handleImageUpload";
+import type { PixiStage } from "../../sceneStage/pixiStage";
 
-type UploadImageButtonProps = ButtonProps & { stageRef: MutableRefObject<Konva.Stage | null> };
+type UploadImageButtonProps = ButtonProps & { stageRef: MutableRefObject<PixiStage | null> };
 const UploadImageButton = ({ stageRef }: UploadImageButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 

@@ -1,6 +1,7 @@
-import type Konva from "konva";
+import type { PixiStage } from "../../sceneStage/pixiStage";
+import type { SceneNodeJSON } from "../../../utils/nodes/types";
 
-const removeObject = (stage: Konva.Stage, nodes: Partial<Konva.Node>[]) => {
+const removeObject = (stage: PixiStage, nodes: SceneNodeJSON[]) => {
   if (nodes.length === 0) return;
   nodes.forEach((node) => {
     const stageNode = stage.findOne(`#${node.attrs.id}`);

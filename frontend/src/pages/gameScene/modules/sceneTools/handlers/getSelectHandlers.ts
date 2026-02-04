@@ -1,5 +1,3 @@
-import Konva from "konva";
-import type { Stage } from "konva/lib/Stage";
 import type { MouseHandlers } from "../useSceneTools";
 import getActiveLayer from "../utils/getActiveLayer";
 import drawActiveLayer from "../utils/drawActiveLayer";
@@ -11,66 +9,74 @@ import isKeyDownInterceptable from "../../../utils/isKeyDownInterceptable";
 import { handleDeleteSelected } from "./select/handleDeleteSelected";
 import { handleCopySelected } from "./select/handleCopySelected";
 import { handlePasteSelected } from "./select/handlePasteSelected";
+import type { PixiStage, ScenePointerEvent } from "../../sceneStage/pixiStage";
+import { createNodeFromJSON, updateNodeGeometry } from "../../../utils/nodes/createNodeFromJSON";
+import type { SceneNode } from "../../../utils/nodes/types";
 
-const getSelectHandlers = (stage: Stage): MouseHandlers => {
+const getSelectHandlers = (stage: PixiStage): MouseHandlers => {
   const activeLayer = getActiveLayer(stage);
   const transformer = getTransformer(stage);
   if (activeLayer) {
-    transformer.moveTo(activeLayer);
+    transformer.moveTo(stage.overlay);
+    transformer.__scene.layerId = activeLayer.__scene.id;
     transformer.moveToTop();
     drawActiveLayer(stage);
   }
 
-  let selectionRectangle = stage.findOne("#selection-rectangle") as Konva.Rect;
+  let selectionRectangle = stage.findOne("#selection-rectangle") as SceneNode | null;
   if (!selectionRectangle) {
-    selectionRectangle = new Konva.Rect({
-      fill: "rgba(88,167,252,0.3)",
-      visible: false,
-      id: "selection-rectangle",
+    selectionRectangle = createNodeFromJSON({
+      className: "Rect",
+      attrs: {
+        id: "selection-rectangle",
+        name: "selection-rectangle",
+        fill: "rgba(88,167,252,0.3)",
+        width: 1,
+        height: 1,
+      },
     });
-    activeLayer.add(selectionRectangle);
+    selectionRectangle.visible = false;
+    selectionRectangle.eventMode = "none";
+    stage.overlay.addChild(selectionRectangle);
   }
   let isSelectingByClick = false;
   let isSelectingByArea = false;
-  let startPosition: Konva.Vector2d | null = null;
+  let startPosition: { x: number; y: number } | null = null;
 
-  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    const node = e.target as Konva.Node;
-    if (e.evt.button !== 0 || node.getParent() === transformer || node === transformer) {
+  const onMouseDown = (e: ScenePointerEvent) => {
+    if (e.evt.button !== 0) {
       return;
     }
-
-    const pos = stage.getPointerPosition();
+    const pos = stage.getWorldPointerPosition();
     if (!pos) return;
-
-    const transform = stage.getAbsoluteTransform().copy().invert();
-    startPosition = transform.point(pos);
+    startPosition = pos;
 
     isSelectingByClick = true;
   };
 
   const onMouseMoveWindow = () => {
     if (!startPosition) return;
-    const pos = stage.getPointerPosition();
-    if (!pos) return;
-
-    const transform = stage.getAbsoluteTransform().copy().invert();
-    const currentPosition = transform.point(pos);
+    const currentPosition = stage.getWorldPointerPosition();
+    if (!currentPosition) return;
     const dx = Math.abs(currentPosition.x - startPosition.x);
     const dy = Math.abs(currentPosition.y - startPosition.y);
     if (dx > 5 || dy > 5) {
       isSelectingByClick = false;
       isSelectingByArea = true;
-      selectionRectangle.visible(true);
-      selectionRectangle.width(dx);
-      selectionRectangle.height(dy);
-      selectionRectangle.x(Math.min(startPosition.x, currentPosition.x));
-      selectionRectangle.y(Math.min(startPosition.y, currentPosition.y));
+      selectionRectangle.visible = true;
+      const x = Math.min(startPosition.x, currentPosition.x);
+      const y = Math.min(startPosition.y, currentPosition.y);
+      selectionRectangle.position.set(x, y);
+      selectionRectangle.__scene.attrs.x = x;
+      selectionRectangle.__scene.attrs.y = y;
+      selectionRectangle.__scene.attrs.width = dx;
+      selectionRectangle.__scene.attrs.height = dy;
+      updateNodeGeometry(selectionRectangle);
       stage.batchDraw();
     }
   };
 
-  const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onMouseUp = (e: ScenePointerEvent) => {
     if (e.evt.button !== 0) return;
 
     if (isSelectingByClick) {
@@ -93,7 +99,7 @@ const getSelectHandlers = (stage: Stage): MouseHandlers => {
   };
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (!isKeyDownInterceptable(e, stage)) return;
+    if (!isKeyDownInterceptable(e)) return;
     if (e.code === "Delete" || e.code === "Backslash") {
       handleDeleteSelected(stage);
       e.preventDefault();
@@ -124,11 +130,11 @@ const getSelectHandlers = (stage: Stage): MouseHandlers => {
   return {
     onMouseDown,
     onMouseUp,
-    onMouseMove: () => {},
+    onMouseMove: (_e: ScenePointerEvent) => {},
     handlerDisposer: () => {
       clearTransformerNodesSelection(stage);
       transformer.destroy();
-      selectionRectangle.destroy();
+      selectionRectangle?.destroy();
       stage.batchDraw();
       document.removeEventListener("mousemove", onMouseMoveWindow);
       document.removeEventListener("mouseup", onMouseUpWindow);

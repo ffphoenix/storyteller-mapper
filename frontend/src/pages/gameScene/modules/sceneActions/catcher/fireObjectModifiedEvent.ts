@@ -1,12 +1,14 @@
-import type Konva from "konva";
 import type { ActionProducer, ModifyActionType, SceneActionEvent } from "../types";
+import type { SceneTransformer } from "../../sceneTransformer/SceneTransformer";
+import type { TransformProps } from "../../sceneTransformer/types";
+import SceneStore from "../../../store/SceneStore";
 
 const fireObjectModifiedEvent = (
   producer: ActionProducer,
   actionType: ModifyActionType,
-  nodes: Konva.Shape,
-  transformer: Konva.Transformer,
-  originalProps: Partial<Konva.NodeConfig>,
+  nodes: SceneTransformer,
+  transformer: SceneTransformer,
+  originalProps: TransformProps,
   event?: MouseEvent,
 ) => {
   if (producer !== "self") return;
@@ -19,7 +21,7 @@ const fireObjectModifiedEvent = (
         actionType,
         originalProps,
         transformer,
-        layerId: nodes.getLayer()?.id() ?? "",
+        layerId: nodes.__scene.layerId || SceneStore.activeLayerId,
       },
     }),
   );

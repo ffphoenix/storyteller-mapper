@@ -1,4 +1,4 @@
-import Konva from "konva";
+import { TilingSprite, Texture } from "pixi.js";
 
 // TODO: try to do the same with SVG
 const createCanvasGrid = (size: number) => {
@@ -22,32 +22,10 @@ const createCanvasGrid = (size: number) => {
   return canvas;
 };
 
-const convertCanvasToImage = (canvas: HTMLCanvasElement) => {
-  const image = new Image(canvas.width, canvas.height);
-  image.src = canvas.toDataURL();
-  return image;
+export const createGrid = (width: number, height: number, cellSize: number = 70) => {
+  const canvasPattern = createCanvasGrid(cellSize);
+  const texture = Texture.from(canvasPattern);
+  const grid = new TilingSprite(texture, width, height);
+  grid.eventMode = "none";
+  return grid;
 };
-
-const createGrid = (layer: Konva.Layer) => {
-  const canvasPattern = convertCanvasToImage(createCanvasGrid(70));
-
-  const gridRect = new Konva.Rect({
-    stroke: "rgba(0, 0, 0, 1)",
-    strokeWidth: 2,
-    x: 0,
-    y: 0,
-    fillPatternImage: canvasPattern,
-    fillPatternRepeat: "repeat",
-    listening: false,
-  });
-  // TODO: integrate this configuration
-  gridRect.width(50 * 70);
-  gridRect.height(50 * 70);
-  gridRect.moveTo(layer);
-  // TODO: find out why cache doesn't work
-  gridRect.cache();
-
-  return gridRect;
-};
-
-export default createGrid;
